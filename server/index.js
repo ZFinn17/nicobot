@@ -1,276 +1,205 @@
 // =============================================
 // NICOBOT - Backend Server SMK ICB Cinta Niaga
+// Template-Based Chatbot (tanpa AI API)
 // =============================================
 
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
-const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
 const PORT = 5000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Inisialisasi Gemini AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
 // =============================================
-// PENYIMPANAN SESI USER (sementara di memory)
-// Key: sessionId, Value: jumlah pertanyaan
+// PENYIMPANAN SESI
 // =============================================
 const userSessions = {};
-const BATAS_PERTANYAAN = 10;
-const NOMOR_ADMIN = '081221049998'; // Nomor WA admin sekolah
+const NOMOR_ADMIN = '081221049998';
 
 // =============================================
-// DATA SEKOLAH - Konteks untuk Chatbot
+// DATABASE TEMPLATE JAWABAN
+// Setiap intent punya: keywords[] dan reply
 // =============================================
-const dataSekolah = `
-INFORMASI RESMI SMK ICB CINTA NIAGA (INSAN CINTA BANGSA)
+const templates = [
 
-=== INFO UMUM ===
-- Nama Sekolah: SMK ICB Cinta Niaga (Insan Cinta Bangsa)
-- Kepala Sekolah: Galih Arifandi, S.Pd.
-- Alamat: Jl. Pahlawan No.19B1, Cihaur Geulis, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40122
-- Telepon/WhatsApp: 081221049998
-- Email: smkicbcintaniaga19b@gmail.com
+  // ---- SALAM / SAPAAN ----
+  {
+    id: 'salam',
+    keywords: ['halo', 'hai', 'hi', 'hello', 'selamat', 'pagi', 'siang', 'sore', 'malam', 'assalamualaikum', 'hei', 'hey'],
+    reply: `Halo! 👋 Selamat datang di NicoBot, asisten resmi *SMK ICB Cinta Niaga*.\n\nAda yang bisa saya bantu? Silakan pilih topik di bawah atau ketik pertanyaanmu langsung ya! 😊`
+  },
 
-=== JAM OPERASIONAL ===
-Siswa:
-- Senin - Selasa: 06.30 - 14.20 WIB
-- Rabu - Kamis: 06.30 - 15.20 WIB
-- Jumat: 06.30 - 11.00 WIB
+  // ---- TERIMA KASIH ----
+  {
+    id: 'terimakasih',
+    keywords: ['terima kasih', 'makasih', 'thanks', 'thank you', 'thx', 'tq', 'tengkyu'],
+    reply: `Sama-sama! 😊 Senang bisa membantu. Kalau ada pertanyaan lain seputar SMK ICB Cinta Niaga, jangan ragu untuk bertanya ya!`
+  },
 
-Tamu/Kunjungan:
-- Senin - Kamis: 08.00 - 15.00 WIB
-- Jumat: 08.00 - 11.00 WIB
+  // ---- INFO UMUM / PROFIL SEKOLAH ----
+  {
+    id: 'info_umum',
+    keywords: ['info', 'informasi', 'profil', 'tentang', 'sekolah', 'smk', 'icb', 'cinta niaga', 'kepala sekolah', 'alamat', 'lokasi', 'dimana', 'letak', 'email', 'kontak', 'telepon', 'phone', 'nomor', 'hubungi', 'contact', 'whatsapp', 'wa'],
+    reply: `📋 *Profil SMK ICB Cinta Niaga*\n\n🏫 *Nama:* SMK ICB Cinta Niaga (Insan Cinta Bangsa)\n👨‍💼 *Kepala Sekolah:* Galih Arifandi, S.Pd.\n📍 *Alamat:* Jl. Pahlawan No.19B1, Cihaur Geulis, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40122\n📞 *Telepon/WA:* 081221049998\n📧 *Email:* smkicbcintaniaga19b@gmail.com\n\nUntuk kunjungan langsung, silakan lihat jam operasional kami ya! ⏰`
+  },
 
-=== VISI & MISI ===
-Visi: Menjadi satuan pendidikan vokasi yang mampu membentuk generasi muda yang produktif, dan berkarakter (cageur, bageur, bener, pinter, singer), serta berdaya saing global di sektor industri pada tahun 2030.
+  // ---- JAM OPERASIONAL ----
+  {
+    id: 'jam_operasional',
+    keywords: ['jam', 'waktu', 'operasional', 'buka', 'tutup', 'masuk', 'pulang', 'jadwal', 'kunjungan', 'tamu'],
+    reply: `⏰ *Jam Operasional SMK ICB Cinta Niaga*\n\n👨‍🎓 *Jam Sekolah Siswa:*\n• Senin – Selasa : 06.30 – 14.20 WIB\n• Rabu – Kamis   : 06.30 – 15.20 WIB\n• Jumat           : 06.30 – 11.00 WIB\n\n🏢 *Jam Kunjungan Tamu:*\n• Senin – Kamis : 08.00 – 15.00 WIB\n• Jumat         : 08.00 – 11.00 WIB`
+  },
 
-Misi:
-1. Menghasilkan lulusan yang berkarakter dan berdaya saing global
-2. Mendorong kreativitas dan kolaborasi dalam pembelajaran yang bermakna
-3. Mengembangkan kompetensi siswa melalui pemanfaatan digital untuk revolusi Industri 4.0
-4. Memberdayakan karakter siswa agar siap bekerja, melanjutkan pendidikan, dan berwirausaha
-5. Menjalin kemitraan dengan seluruh ekosistem pendidikan untuk penjaminan mutu berkualitas
+  // ---- VISI MISI ----
+  {
+    id: 'visi_misi',
+    keywords: ['visi', 'misi', 'tujuan', 'goal', 'visi misi'],
+    reply: `🎯 *Visi & Misi SMK ICB Cinta Niaga*\n\n🌟 *Visi:*\nMenjadi satuan pendidikan vokasi yang mampu membentuk generasi muda yang produktif dan berkarakter (cageur, bageur, bener, pinter, singer), serta berdaya saing global di sektor industri pada tahun 2030.\n\n📌 *Misi:*\n1. Menghasilkan lulusan yang berkarakter dan berdaya saing global\n2. Mendorong kreativitas dan kolaborasi dalam pembelajaran bermakna\n3. Mengembangkan kompetensi siswa melalui pemanfaatan digital (Industri 4.0)\n4. Memberdayakan karakter siswa agar siap kerja, kuliah, dan wirausaha\n5. Menjalin kemitraan dengan seluruh ekosistem pendidikan untuk penjaminan mutu`
+  },
 
-=== JURUSAN ===
-Kapasitas: Maksimal 30 siswa per kelas (berlaku semua jurusan)
+  // ---- JURUSAN ----
+  {
+    id: 'jurusan',
+    keywords: ['jurusan', 'program', 'studi', 'kejuruan', 'mplb', 'akuntansi', 'ak', 'rpl', 'pplg', 'perangkat lunak', 'programmer', 'developer', 'bisnis ritel', 'br', 'pemasaran', 'marketing', 'manajemen perkantoran', 'pilihan', 'jurusan apa'],
+    reply: `📚 *Jurusan di SMK ICB Cinta Niaga*\n_(Kapasitas: maks. 30 siswa/kelas)_\n\n1️⃣ *MPLB – Manajemen Perkantoran & Layanan Bisnis*\n   Area kerja luas di berbagai instansi, bisa jadi Event Organizer\n\n2️⃣ *AK – Akuntansi dan Keuangan Lembaga*\n   Fokus keuangan, peluang kerja di Bank atau kelola keuangan UMKM\n\n3️⃣ *PPLG/RPL – Pengembangan Perangkat Lunak & GIM*\n   Fokus teknologi & aplikasi, peluang jadi developer / game developer\n\n4️⃣ *BR – Bisnis Ritel / Pemasaran*\n   Fokus bisnis digital & marketing online, bisa buka toko sendiri\n\nMau tahu lebih detail salah satu jurusan? Tanyakan saja! 😊`
+  },
 
-1. Manajemen Perkantoran & Layanan Bisnis (MPLB)
-   - Area kerja luas di berbagai instansi
-   - Bisa bekerja sebagai Event Organizer
+  // ---- PENDAFTARAN / PPDB ----
+  {
+    id: 'pendaftaran',
+    keywords: ['daftar', 'pendaftaran', 'ppdb', 'cara daftar', 'syarat', 'dokumen', 'registrasi', 'masuk', 'penerimaan', 'gelombang', 'online', 'offline', 'formulir'],
+    reply: `📝 *Info Pendaftaran (PPDB) SMK ICB Cinta Niaga*\n\n📅 *Jadwal:* Periode utama Mei – Juni (gelombang awal sudah dibuka lebih awal)\n\n🖥️ *Cara Mendaftar:*\n• *Online:* Melalui link pendaftaran, scan barcode, atau website resmi\n• *Offline:* Datang langsung ke sekolah, panitia siap membantu\n\n📄 *Dokumen yang Diperlukan:*\n1. Fotokopi Ijazah / SKL (2 lembar)\n2. Fotokopi KTP Orang Tua (2 lembar)\n3. Fotokopi Kartu Keluarga (1 lembar)\n4. Surat Keterangan Berkelakuan Baik dari Kepsek SMP asal\n5. Stofmap Biola warna kuning (2 buah)\n6. Kaos oblong warna putih\n\nAda pertanyaan lain seputar pendaftaran? 😊`
+  },
 
-2. Akuntansi dan Keuangan Lembaga (AK)
-   - Fokus pada keuangan
-   - Peluang kerja di Bank atau mengelola keuangan UMKM
+  // ---- BIAYA ----
+  {
+    id: 'biaya',
+    keywords: ['biaya', 'spp', 'uang', 'bayar', 'harga', 'tarif', 'iuran', 'dsp', 'dana sumbangan', 'berapa', 'cost', 'beasiswa', 'diskon', 'gratis', 'potongan', 'cicil'],
+    reply: `💰 *Biaya Sekolah SMK ICB Cinta Niaga (Kelas 10)*\n\n| Komponen | Biaya |\n|---|---|\n| SPP per bulan | Rp 375.000 |\n| Dana Sumbangan (DSP) | Rp 3.000.000 |\n| Uang Praktik & Ujian /tahun | Rp 1.550.000 |\n| Biaya Personal Siswa* | Rp 1.200.000 |\n| **TOTAL AWAL** | **Rp 6.325.000** |\n\n*_*Biaya personal meliputi: seragam olahraga, jurusan, batik, jas almamater, kartu pelajar, asuransi 3 tahun, kunjungan industri, air minum 1 tahun_\n\n🎁 *Program Diskon / Beasiswa:*\n• Diskon DSP 30% → daftar 1 Jan – 31 Mar 2026\n• Diskon DSP 20% → daftar 1 Apr – 30 Jun 2026\n• Diskon DSP 30% → khusus anak Guru, TNI, atau POLRI\n• Diskon tambahan 5% → jika biaya dibayar lunas sekaligus\n• Gratis SPP 1 bulan → jika SPP dibayar penuh 1 tahun`
+  },
 
-3. Pengembangan Perangkat Lunak & GIM (PPLG/RPL)
-   - Fokus pada teknologi dan pembuatan aplikasi
-   - Peluang kerja sebagai developer, programmer, game developer
+  // ---- FASILITAS ----
+  {
+    id: 'fasilitas',
+    keywords: ['fasilitas', 'sarana', 'prasarana', 'lab', 'laboratorium', 'gor', 'olahraga', 'gedung', 'ruang', 'mart', 'niaga mart', 'seni'],
+    reply: `🏫 *Fasilitas SMK ICB Cinta Niaga*\n\n• 🔬 Laboratorium untuk setiap jurusan\n• 🎨 Ruang Seni\n• 🏀 Gedung Olahraga (GOR)\n• 🛒 Niaga Mart\n\nFasilitas dirancang untuk mendukung pembelajaran vokasi yang praktis dan siap industri! 💪`
+  },
 
-4. Bisnis Ritel / Pemasaran (BR)
-   - Fokus pada bisnis digital dan pemasaran online
-   - Peluang membuka toko sendiri atau terjun ke dunia marketing
+  // ---- EKSTRAKURIKULER ----
+  {
+    id: 'ekskul',
+    keywords: ['ekskul', 'ekstrakurikuler', 'kegiatan', 'organisasi', 'osis', 'pmr', 'paskibra', 'boxing', 'rohis', 'pramuka', 'basket', 'fotografi', 'angklung', 'english club', 'paduan suara', 'japanese', 'sispala', 'club', 'komunitas'],
+    reply: `🎓 *Ekstrakurikuler SMK ICB Cinta Niaga*\n\nAda banyak pilihan ekskul seru! 🎉\n\n⚕️ PMR &nbsp;&nbsp; 🇮🇩 Paskibra &nbsp;&nbsp; 🥊 Boxing\n🕌 Rohis &nbsp;&nbsp; 💃 Serinca &nbsp;&nbsp; 🎭 Danger\n📷 Fotografi &nbsp;&nbsp; 🎵 Angklung &nbsp;&nbsp; 🏀 Basket\n🏕️ Pramuka &nbsp;&nbsp; 🧗 Sispala\n🇬🇧 English Club &nbsp;&nbsp; 🎤 Paduan Suara\n🇯🇵 Japanese Club &nbsp;&nbsp; 👥 OSIS\n\nMinat yang beragam bisa tersalurkan di sini! 😊`
+  },
 
-=== PENDAFTARAN / PPDB ===
-Jadwal: Periode utama Mei - Juni, pendaftaran gelombang awal sudah dibuka sebelumnya
+  // ---- PKL / MAGANG ----
+  {
+    id: 'pkl',
+    keywords: ['pkl', 'magang', 'praktik kerja', 'prakerin', 'industri', 'kerja lapangan', 'tempat magang', 'yogya', 'griya', 'hotel'],
+    reply: `🏢 *Info PKL / Magang SMK ICB Cinta Niaga*\n\n• 🛒 Jaringan PKL resmi: **Toserba Yogya/Griya** (untuk semua jurusan) dan **perhotelan**\n• ✅ Siswa juga *boleh mencari tempat PKL sendiri* secara mandiri\n\nSMK ICB Cinta Niaga memastikan setiap siswa mendapat pengalaman kerja nyata sebelum lulus! 💼`
+  },
 
-Cara Mendaftar:
-- Online: Melalui link pendaftaran, scan barcode, atau website resmi sekolah
-- Offline: Datang langsung ke sekolah, akan diarahkan panitia
+  // ---- PRESTASI & ALUMNI ----
+  {
+    id: 'prestasi',
+    keywords: ['prestasi', 'alumni', 'lulusan', 'kerja', 'karir', 'sukses', 'pencapaian', 'nicholas', 'taufiq', 'devops', 'berprestasi'],
+    reply: `🏆 *Prestasi & Alumni SMK ICB Cinta Niaga*\n\n✅ Sekolah menjamin lulusannya **siap kerja** — tidak ada siswa yang menganggur setelah lulus!\n🎯 Aktif mengadakan berbagai acara dan workshop persiapan karir\n\n👨‍💻 *Alumni Berprestasi:*\n\n• **Nicholas Alvi Saputra**\n  Alumni RPL angkatan 2019\n  → DevOps Engineer di PT. Swamedia\n\n• **Dr. Taufiq Hifayat, S.Sos., M.M.**\n  → Wakil Ketua 1 Bidang Akademik & Kemahasiswaan\n  di STIE Pariwisata Yapari Bandung`
+  },
 
-Syarat Dokumen:
-1. Fotokopi Ijazah / Surat Keterangan Lulus (2 Lembar)
-2. Fotokopi KTP Orang Tua (2 Lembar)
-3. Fotokopi Kartu Keluarga (1 Lembar)
-4. Surat Keterangan Berkelakuan Baik dari Kepala Sekolah SMP asal
-5. Stofmap Biola warna kuning (2 Buah)
-6. Kaos oblong warna putih
-
-Rincian Biaya (Kelas 10):
-- SPP per bulan: Rp 375.000
-- Dana Sumbangan Sekolah (DSP): Rp 3.000.000
-- Uang Praktik & Ujian (per tahun): Rp 1.550.000
-- Biaya Personal Siswa: Rp 1.200.000
-  (termasuk seragam olahraga, jurusan, batik, jas almamater, kartu pelajar, asuransi 3 tahun, kunjungan industri, air minum 1 tahun)
-- TOTAL BIAYA AWAL: Rp 6.325.000 (sebelum diskon)
-
-Program Beasiswa / Diskon:
-- Diskon DSP 30%: Pendaftaran 1 Januari - 31 Maret 2026
-- Diskon DSP 20%: Pendaftaran 1 April - 30 Juni 2026
-- Diskon DSP 30%: Khusus anak Guru, TNI, atau POLRI
-- Diskon Tambahan 5%: Jika seluruh biaya dibayar lunas
-- Gratis SPP 1 Bulan: Jika SPP dibayar penuh 1 tahun sekaligus
-
-=== FASILITAS ===
-- Laboratorium untuk setiap jurusan
-- Ruang Seni
-- Gedung Olahraga (GOR)
-- Niaga Mart
-
-=== EKSTRAKURIKULER ===
-PMR, Paskibra, Boxing, Rohis, Serinca, Danger, Fotografi, Angklung, Basket, Pramuka, Sispala, English Club, Paduan Suara (Padus), Japanese Club, dan OSIS
-
-=== MAGANG / PKL ===
-- Jaringan PKL: Toserba Yogya/Griya (semua jurusan) dan perhotelan
-- Siswa juga diperbolehkan mencari tempat PKL sendiri secara mandiri
-
-=== PRESTASI & ALUMNI ===
-- Sekolah menjamin lulusannya siap kerja (tidak ada siswa yang menganggur setelah lulus)
-- Sangat aktif mengadakan berbagai acara dan workshop persiapan karir
-
-Alumni Berprestasi:
-- Nicholas Alvi Saputra: Alumni RPL angkatan 2019, berkarir sebagai DevOps Engineer di PT. Swamedia
-- Dr. Taufiq Hifayat, S.Sos., M.M.: Wakil Ketua 1 Bidang Akademik dan Kemahasiswaan di STIE Pariwisata Yapari Bandung
-`;
+  // ---- TIDAK DIKENALI ----
+  {
+    id: 'fallback',
+    keywords: [], // fallback tidak pakai keywords, dipanggil manual
+    reply: `Hmm, maaf saya belum bisa menjawab pertanyaan itu. 🙏\n\nSilakan pilih topik yang tersedia, atau hubungi admin kami langsung:\n📞 *WhatsApp:* 081221049998\n📧 *Email:* smkicbcintaniaga19b@gmail.com`
+  }
+];
 
 // =============================================
-// SYSTEM PROMPT - Kepribadian & Aturan Chatbot
+// ENGINE: Cocokkan pesan ke intent
+// Pakai fuzzy matching sederhana (includes)
 // =============================================
-const systemPrompt = `
-Kamu adalah NicoBot, asisten chatbot resmi SMK ICB Cinta Niaga yang ramah, sopan, dan informatif.
-Tugasmu HANYA menjawab pertanyaan seputar SMK ICB Cinta Niaga.
+function matchIntent(message) {
+  const lower = message.toLowerCase().trim();
 
-Berikut adalah data resmi sekolah yang boleh kamu gunakan untuk menjawab:
-${dataSekolah}
+  // Coba cocokkan ke setiap template
+  for (const tmpl of templates) {
+    if (tmpl.id === 'fallback') continue;
+    for (const kw of tmpl.keywords) {
+      if (lower.includes(kw)) {
+        return tmpl;
+      }
+    }
+  }
 
-ATURAN PENTING yang wajib kamu ikuti:
-1. Jawab HANYA pertanyaan yang berkaitan dengan SMK ICB Cinta Niaga
-2. Jika ditanya di luar topik sekolah (misal: resep masakan, pelajaran umum, politik, hiburan, dll), tolak dengan sopan dan arahkan balik ke topik sekolah
-3. Jika pertanyaan terlalu kompleks atau sensitif, sarankan user untuk menghubungi admin langsung
-4. Gunakan bahasa Indonesia yang sopan, ramah, dan mudah dipahami
-5. JANGAN mengarang atau membuat informasi yang tidak ada di data sekolah di atas
-6. Jawaban harus singkat, padat, dan jelas
-7. Boleh menggunakan emoji secukupnya agar terasa ramah
-8. Jika user mengucapkan salam, balas dengan ramah dan tanyakan apa yang bisa dibantu
-`;
+  // Tidak cocok → fallback
+  return templates.find(t => t.id === 'fallback');
+}
 
 // =============================================
-// ENDPOINT: Quick Replies (Tombol Pilihan)
+// ENDPOINT: Quick Replies
 // =============================================
 app.get('/api/quick-replies', (req, res) => {
-    const quickReplies = [
-        { id: 1, label: '📚 Jurusan yang Tersedia' },
-        { id: 2, label: '📝 Info Pendaftaran' },
-        { id: 3, label: '💰 Biaya Sekolah' },
-        { id: 4, label: '🎓 Fasilitas & Ekskul' },
-        { id: 5, label: '⏰ Jam Operasional' },
-        { id: 6, label: '🏆 Prestasi & Alumni' },
-        { id: 7, label: '📍 Lokasi Sekolah' },
-        { id: 8, label: '📞 Kontak Sekolah' },
-    ];
-    res.json(quickReplies);
+  const quickReplies = [
+    { id: 1, label: '📚 Jurusan yang Tersedia',  message: 'Jurusan apa saja yang ada?' },
+    { id: 2, label: '📝 Info Pendaftaran',        message: 'Bagaimana cara mendaftar?' },
+    { id: 3, label: '💰 Biaya Sekolah',           message: 'Berapa biaya sekolahnya?' },
+    { id: 4, label: '🎓 Fasilitas & Ekskul',      message: 'Apa saja fasilitas dan ekskul?' },
+    { id: 5, label: '⏰ Jam Operasional',          message: 'Jam berapa sekolah buka?' },
+    { id: 6, label: '🏆 Prestasi & Alumni',        message: 'Prestasi dan alumni sekolah' },
+    { id: 7, label: '📍 Lokasi & Kontak',          message: 'Di mana lokasi sekolah dan kontaknya?' },
+    { id: 8, label: '🎯 Visi & Misi',              message: 'Apa visi dan misi sekolah?' },
+  ];
+  res.json(quickReplies);
 });
 
 // =============================================
-// ENDPOINT: Chat dengan Gemini AI
+// ENDPOINT: Chat (Template Engine)
 // =============================================
-app.post('/api/chat', async (req, res) => {
-    const { message, history, sessionId } = req.body;
+app.post('/api/chat', (req, res) => {
+  const { message, sessionId } = req.body;
 
-    // Validasi input
-    if (!message || message.trim() === '') {
-        return res.status(400).json({ error: 'Pesan tidak boleh kosong' });
-    }
+  if (!message || message.trim() === '') {
+    return res.status(400).json({ error: 'Pesan tidak boleh kosong' });
+  }
+  if (!sessionId) {
+    return res.status(400).json({ error: 'Session ID tidak ditemukan' });
+  }
 
-    if (!sessionId) {
-        return res.status(400).json({ error: 'Session ID tidak ditemukan' });
-    }
+  // Inisialisasi sesi jika belum ada
+  if (!userSessions[sessionId]) {
+    userSessions[sessionId] = { count: 0 };
+  }
 
-    // Cek & update jumlah pertanyaan user
-    if (!userSessions[sessionId]) {
-        userSessions[sessionId] = 0;
-    }
+  // Cocokkan pesan ke intent
+  const matched = matchIntent(message);
 
-    // Kalau sudah mencapai batas, tolak dan arahkan ke admin
-    if (userSessions[sessionId] >= BATAS_PERTANYAAN) {
-        return res.json({
-            reply: `Maaf, kamu sudah mencapai batas maksimal ${BATAS_PERTANYAAN} pertanyaan untuk sesi ini. 😊\n\nUntuk pertanyaan lebih lanjut, silakan hubungi admin kami langsung melalui WhatsApp ya!`,
-            limitReached: true,
-            adminContact: NOMOR_ADMIN,
-            timestamp: new Date().toISOString()
-        });
-    }
-
-    // Tambah hitungan pertanyaan
-    userSessions[sessionId]++;
-    const sisaPertanyaan = BATAS_PERTANYAAN - userSessions[sessionId];
-
-    try {
-        // Bangun riwayat percakapan
-        const chatHistory = (history || []).map(item => ({
-            role: item.role,
-            parts: [{ text: item.text }]
-        }));
-
-        // Mulai sesi chat dengan Gemini
-        const chat = model.startChat({
-            history: [
-                {
-                    role: 'user',
-                    parts: [{ text: systemPrompt }]
-                },
-                {
-                    role: 'model',
-                    parts: [{ text: 'Siap! Saya NicoBot, asisten resmi SMK ICB Cinta Niaga. Saya siap membantu menjawab pertanyaan seputar sekolah kami. 😊' }]
-                },
-                ...chatHistory
-            ]
-        });
-
-        // Kirim pesan user ke Gemini
-        const result = await chat.sendMessage(message);
-        let botReply = result.response.text();
-
-        // Kalau sisa pertanyaan tinggal 3 atau kurang, kasih peringatan
-        if (sisaPertanyaan <= 3 && sisaPertanyaan > 0) {
-            botReply += `\n\n⚠️ *Sisa pertanyaan kamu: ${sisaPertanyaan} lagi.*`;
-        }
-
-        res.json({
-            reply: botReply,
-            sisaPertanyaan: sisaPertanyaan,
-            limitReached: false,
-            timestamp: new Date().toISOString()
-        });
-
-    } catch (error) {
-        console.error('Error saat menghubungi Gemini:', error.message);
-        // Kalau error, jangan hitung sebagai pertanyaan
-        userSessions[sessionId]--;
-        res.status(500).json({
-            error: 'Maaf, terjadi kesalahan pada server. Silakan coba lagi atau hubungi admin.',
-            adminContact: NOMOR_ADMIN
-        });
-    }
+  res.json({
+    reply: matched.reply,
+    intent: matched.id,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // =============================================
-// ENDPOINT: Reset Sesi (opsional)
+// ENDPOINT: Reset Sesi
 // =============================================
 app.post('/api/reset-session', (req, res) => {
-    const { sessionId } = req.body;
-    if (sessionId && userSessions[sessionId]) {
-        delete userSessions[sessionId];
-    }
-    res.json({ message: 'Sesi berhasil direset' });
+  const { sessionId } = req.body;
+  if (sessionId && userSessions[sessionId]) {
+    delete userSessions[sessionId];
+  }
+  res.json({ message: 'Sesi berhasil direset' });
 });
 
 // =============================================
-// ENDPOINT: Test Server
+// ENDPOINT: Test
 // =============================================
 app.get('/', (req, res) => {
-    res.send('NicoBot Server sudah berjalan! 🚀');
+  res.send('NicoBot Template Server berjalan! 🚀');
 });
 
-// Jalankan Server
 app.listen(PORT, () => {
-    console.log(`NicoBot Server berjalan di http://localhost:${PORT}`);
+  console.log(`NicoBot Server berjalan di http://localhost:${PORT}`);
 });
-v
