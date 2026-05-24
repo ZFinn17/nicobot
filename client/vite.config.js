@@ -2,9 +2,7 @@ import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-  ],
+  plugins: [tailwindcss()],
   root: '.',
   server: {
     port: 3000,
@@ -22,6 +20,7 @@ export default defineConfig({
         profile: 'profile.html',
         major:   'major.html',
         about:   'about.html',
+        nicobot: 'nicobot.html',
       }
     }
   }

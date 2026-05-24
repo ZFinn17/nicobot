@@ -30,7 +30,7 @@
         <li><a href="about.html">About</a></li>
       </ul>
       <a
-        href="#nicobot-section"
+        href="nicobot.html"
         class="bg-blue-950 text-white w-1/2 md:w-fit px-2.5 py-1.5 rounded-lg text-xs mt-2 md:mt-0 md:px-4.5 md:py-2 text-center"
       >
         Chat With Us
@@ -406,116 +406,5 @@
         </div>
       </footer>
 
-      <!-- ===================================================
-           NICOBOT CHATBOT SECTION
-           Terhubung ke server di http://localhost:5000
-           =================================================== -->
-      <section id="nicobot-section" class="py-16 px-4 md:px-10">
-        <div class="max-w-3xl mx-auto">
-          <!-- Header chatbot -->
-          <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-3">
-              <div
-                class="w-10 h-10 rounded-full bg-yellow-500/20 border border-yellow-500/40 flex items-center justify-center"
-              >
-                <i class="fa-solid fa-robot text-yellow-400"></i>
-              </div>
-              <div>
-                <h2 class="text-white font-semibold text-lg leading-tight">
-                  NicoBot
-                </h2>
-                <p class="text-gray-400 text-xs">
-                  Asisten resmi SMK ICB Cinta Niaga
-                </p>
-              </div>
-              <!-- Indikator online -->
-              <span
-                class="flex items-center gap-1.5 text-xs text-green-400 ml-2"
-              >
-                <span
-                  class="w-2 h-2 rounded-full bg-green-400 inline-block animate-pulse"
-                ></span>
-                Online
-              </span>
-            </div>
-
-            <!-- Counter + Reset -->
-            <div class="flex items-center gap-3">
-              <span id="nicobot-counter" class="text-xs text-gray-400"
-                >10 pertanyaan tersisa</span
-              >
-              <button
-                id="nicobot-reset"
-                title="Reset percakapan"
-                class="text-gray-400 hover:text-white transition-colors text-sm p-1.5 rounded-lg hover:bg-white/10"
-              >
-                <i class="fa-solid fa-rotate-right"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Kotak chat -->
-          <div
-            class="rounded-2xl border border-white/10 overflow-hidden"
-            style="background: rgba(255, 255, 255, 0.04)"
-          >
-            <!-- Area pesan -->
-            <div
-              id="nicobot-messages"
-              class="flex flex-col gap-4 p-5 overflow-y-auto"
-              style="height: 420px"
-            ></div>
-
-            <!-- Quick Replies -->
-            <div
-              id="nicobot-quick-replies"
-              class="flex flex-wrap gap-2 px-5 pb-4 border-t border-white/8"
-              style="padding-top: 12px"
-            >
-              <!-- Di-load oleh chatbot.js dari /api/quick-replies -->
-              <span class="text-xs text-gray-500">Memuat pilihan cepat...</span>
-            </div>
-
-            <!-- Input area -->
-            <div
-              class="flex items-center gap-2 px-4 py-3 border-t border-white/8"
-            >
-              <input
-                id="nicobot-input"
-                type="text"
-                placeholder="Ketik pertanyaanmu..."
-                autocomplete="off"
-                class="flex-1 bg-white/8 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500/60 focus:bg-white/12 transition-all"
-                style="background: rgba(255, 255, 255, 0.07)"
-              />
-              <button
-                id="nicobot-send"
-                class="w-9 h-9 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-white transition-all shrink-0"
-              >
-                <i class="fa-solid fa-paper-plane text-sm"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Footer note -->
-          <p class="text-center text-gray-600 text-xs mt-4">
-            NicoBot hanya menjawab pertanyaan seputar SMK ICB Cinta Niaga. Punya
-            pertanyaan lain?
-            <a
-              href="https://wa.me/6281221049998"
-              target="_blank"
-              class="text-green-400 hover:text-green-300"
-              >Hubungi admin via WhatsApp</a
-            >.
-          </p>
-        </div>
-      </section>
-    </main>
-
-    <!-- Init NicoBot -->
-    <script type="module">
-      import { initChatbot } from "./src/chatbot.js";
-      initChatbot();
-    </script>
   </body>
 </html>

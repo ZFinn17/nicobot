@@ -1,126 +1,259 @@
 /* =============================================
-   NicoBot Chatbot Styles
-   Tambahkan ke src/style.css atau @import file ini
+   NicoBot Chatbot Styles — Clean Minimal
    ============================================= */
 
+/* Font dari Google — Inter (sudah dimuat di profile.html) */
+
 #nicobot-section {
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+  background: linear-gradient(160deg, #0d1b2a 0%, #1b2e45 100%);
 }
 
+/* ---- Bubble bot ---- */
 .nicobot-bubble-bot {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #f1f5f9;
-  border-radius: 1rem;
-  border-top-left-radius: 0.25rem;
-  padding: 0.625rem 0.875rem;
-  max-width: 85%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  border-radius: 0 1rem 1rem 1rem;
+  padding: 0.875rem 1rem;
+  max-width: 88%;
   font-size: 0.875rem;
-  line-height: 1.6;
+  line-height: 1.65;
+  font-family: 'Inter', sans-serif;
 }
 
+/* ---- Bubble user ---- */
 .nicobot-bubble-user {
-  background: #1e40af;
-  color: white;
-  border-radius: 1rem;
-  border-top-right-radius: 0.25rem;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 1rem 0 1rem 1rem;
   padding: 0.625rem 0.875rem;
-  max-width: 78%;
+  max-width: 75%;
   font-size: 0.875rem;
-  line-height: 1.6;
+  line-height: 1.55;
+  font-family: 'Inter', sans-serif;
   word-break: break-word;
 }
 
-.nicobot-quick-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.5rem 0.875rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.8125rem;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.18s ease;
-  font-family: inherit;
+/* ---- Animasi masuk ---- */
+.message-enter {
+  animation: bubbleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.nicobot-quick-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(99, 179, 237, 0.5);
-  color: white;
-  transform: translateY(-1px);
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ---- Typing dots ---- */
 .nicobot-typing-dots {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 0;
+  gap: 5px;
+  padding: 3px 0;
 }
 
 .nicobot-typing-dots span {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.55);
-  display: inline-block;
-  animation: nicoTyping 1.2s ease infinite;
+  background: rgba(255, 255, 255, 0.45);
+  animation: nicoDot 1.2s ease infinite;
 }
 
 .nicobot-typing-dots span:nth-child(2) { animation-delay: 0.18s; }
 .nicobot-typing-dots span:nth-child(3) { animation-delay: 0.36s; }
 
-@keyframes nicoTyping {
-  0%, 100% { opacity: 0.3; transform: scale(0.85); }
-  50%       { opacity: 1;   transform: scale(1.15); }
+@keyframes nicoDot {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50%       { opacity: 1;   transform: scale(1.2); }
 }
 
-.message-enter {
-  animation: nicoBubbleIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+/* ---- Quick reply pills ---- */
+.nicobot-quick-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.8rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  letter-spacing: 0.01em;
 }
 
-@keyframes nicoBubbleIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+.nicobot-quick-btn:hover {
+  background: rgba(37, 99, 235, 0.35);
+  border-color: rgba(96, 165, 250, 0.5);
+  color: #fff;
 }
 
+/* ---- Limit reached banner ---- */
 .nicobot-limit-banner {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
-  background: rgba(245, 158, 11, 0.12);
+  background: rgba(245, 158, 11, 0.1);
   border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   color: #fbbf24;
-  font-size: 0.8125rem;
-  margin-top: 0.5rem;
+  font-size: 0.8rem;
 }
 
 .nicobot-wa-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: 0.35rem;
   background: #16a34a;
   color: white;
-  padding: 0.375rem 0.75rem;
+  padding: 0.3rem 0.65rem;
   border-radius: 9999px;
-  font-size: 0.8125rem;
+  font-size: 0.8rem;
   text-decoration: none;
-  transition: background 0.18s;
+  transition: background 0.15s;
   margin-left: auto;
 }
 
 .nicobot-wa-btn:hover { background: #15803d; }
 
-#nicobot-messages::-webkit-scrollbar { width: 4px; }
+/* ---- Scrollbar ---- */
+#nicobot-messages::-webkit-scrollbar { width: 3px; }
 #nicobot-messages::-webkit-scrollbar-track { background: transparent; }
-#nicobot-messages::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.15);
-  border-radius: 4px;
+#nicobot-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+
+/* =============================================
+   KOMPONEN DALAM BUBBLE (HTML reply dari server)
+   ============================================= */
+
+/* Info grid (label: value) */
+.nicobot-bubble-bot .info-grid { display: flex; flex-direction: column; gap: 0.4rem; }
+.nicobot-bubble-bot .info-row {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  align-items: flex-start;
 }
+.nicobot-bubble-bot .info-label {
+  color: #93c5fd;
+  min-width: 120px;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+}
+
+/* Jurusan cards */
+.nicobot-bubble-bot .jurusan-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.nicobot-bubble-bot .jurusan-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.5rem 0.65rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255,255,255,0.07);
+}
+.nicobot-bubble-bot .jurusan-tag {
+  background: #1d4ed8;
+  color: #bfdbfe;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.3rem;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Badge */
+.nicobot-bubble-bot .badge {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.65);
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  font-weight: 400;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+/* Biaya table */
+.nicobot-bubble-bot .biaya-table { display: flex; flex-direction: column; gap: 0.3rem; }
+.nicobot-bubble-bot .biaya-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.nicobot-bubble-bot .biaya-row.total {
+  font-weight: 600;
+  color: #93c5fd;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  border-bottom: none;
+  padding-top: 0.5rem;
+  margin-top: 0.2rem;
+}
+
+/* Fasilitas grid */
+.nicobot-bubble-bot .fasilitas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.nicobot-bubble-bot .fasilitas-item {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+/* Ekskul tags */
+.nicobot-bubble-bot .ekskul-grid { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.nicobot-bubble-bot .ekskul-tag {
+  background: rgba(37, 99, 235, 0.2);
+  border: 1px solid rgba(96, 165, 250, 0.25);
+  color: #93c5fd;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 9999px;
+}
+
+/* Alumni list */
+.nicobot-bubble-bot .alumni-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.nicobot-bubble-bot .alumni-item {
+  padding: 0.5rem 0.65rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 0.5rem;
+  border-left: 2px solid #3b82f6;
+}
+
+/* Ordered list (misi, syarat) */
+.nicobot-bubble-bot .misi-list {
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+}
+.nicobot-bubble-bot .misi-list li { line-height: 1.55; }
+
+/* Spacing helpers */
+.nicobot-bubble-bot .mt-2 { margin-top: 0.5rem; }
+.nicobot-bubble-bot .mt-3 { margin-top: 0.75rem; }
+.nicobot-bubble-bot .mb-1 { margin-bottom: 0.25rem; }
+.nicobot-bubble-bot .mb-2 { margin-bottom: 0.5rem; }
+.nicobot-bubble-bot .mb-3 { margin-bottom: 0.75rem; }
+.nicobot-bubble-bot .font-semibold { font-weight: 600; color: #f1f5f9; }
+.nicobot-bubble-bot .font-medium { font-weight: 500; }
+.nicobot-bubble-bot strong { font-weight: 600; color: #f1f5f9; }
+.nicobot-bubble-bot .text-sm { font-size: 0.82rem; }
+.nicobot-bubble-bot .text-xs { font-size: 0.75rem; }
+.nicobot-bubble-bot .uppercase { text-transform: uppercase; }
+.nicobot-bubble-bot .tracking-wide { letter-spacing: 0.06em; }
+.nicobot-bubble-bot .opacity-60 { opacity: 0.6; }
+.nicobot-bubble-bot .opacity-70 { opacity: 0.7; }

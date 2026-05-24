@@ -3,7 +3,6 @@
 // =============================================
 
 const API_BASE = '/api';
-const ADMIN_WA = '081221049998';
 
 function getSessionId() {
   let sid = sessionStorage.getItem('nicobot_session');
@@ -14,27 +13,15 @@ function getSessionId() {
   return sid;
 }
 
-const state = {
-  sessionId: getSessionId(),
-  isLoading: false,
-};
+const state = { sessionId: getSessionId(), isLoading: false };
 
-// ---- Format teks: *bold* dan newline → <br> ----
-function formatText(text) {
-  return text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>');
-}
-
-// ---- Bubble bot ----
-function createBotBubble(text, isTyping = false) {
+// ---- Bubble bot — reply dari server sudah HTML, langsung inject ----
+function createBotBubble(htmlContent, isTyping = false) {
   const wrapper = document.createElement('div');
   wrapper.className = 'flex items-start gap-2 message-enter';
 
   const avatar = document.createElement('div');
-  avatar.className =
-    'w-8 h-8 rounded-full bg-blue-950 flex items-center justify-center flex-shrink-0 mt-1';
+  avatar.className = 'w-8 h-8 rounded-full bg-blue-950 flex items-center justify-center flex-shrink-0 mt-1';
   avatar.innerHTML = '<i class="fa-solid fa-robot text-yellow-400 text-xs"></i>';
 
   const bubble = document.createElement('div');
@@ -44,7 +31,8 @@ function createBotBubble(text, isTyping = false) {
     wrapper.id = 'nicobot-typing';
     bubble.innerHTML = `<span class="nicobot-typing-dots"><span></span><span></span><span></span></span>`;
   } else {
-    bubble.innerHTML = formatText(text);
+    // Reply dari server sudah HTML — langsung set innerHTML
+    bubble.innerHTML = htmlContent;
   }
 
   wrapper.appendChild(avatar);
@@ -67,7 +55,7 @@ function scrollToBottom(el) {
   el.scrollTop = el.scrollHeight;
 }
 
-// ---- Load quick replies dari server ----
+// ---- Load quick replies ----
 async function loadQuickReplies(container) {
   try {
     const res = await fetch(`${API_BASE}/quick-replies`);
@@ -77,7 +65,6 @@ async function loadQuickReplies(container) {
       const btn = document.createElement('button');
       btn.className = 'nicobot-quick-btn';
       btn.textContent = r.label;
-      // Kirim 'message' (bukan label) supaya engine bisa cocokkan keyword
       btn.addEventListener('click', () => {
         container.style.display = 'none';
         sendMessage(r.message || r.label);
@@ -85,11 +72,11 @@ async function loadQuickReplies(container) {
       container.appendChild(btn);
     });
   } catch {
-    container.innerHTML = '<p class="text-xs text-gray-400 px-1">Gagal memuat pilihan.</p>';
+    container.innerHTML = '<p style="font-size:0.75rem;color:rgba(255,255,255,0.35);padding:0 4px">Gagal memuat pilihan.</p>';
   }
 }
 
-// ---- Kirim pesan ke server ----
+// ---- Kirim pesan ----
 async function sendMessage(text) {
   if (state.isLoading || !text.trim()) return;
 
@@ -98,52 +85,41 @@ async function sendMessage(text) {
   const sendBtn    = document.getElementById('nicobot-send');
   const quickEl    = document.getElementById('nicobot-quick-replies');
 
-  // Tampilkan pesan user
   messagesEl.appendChild(createUserBubble(text));
   if (inputEl) inputEl.value = '';
   if (quickEl) quickEl.style.display = 'none';
   scrollToBottom(messagesEl);
 
-  // Typing indicator
   state.isLoading = true;
   if (sendBtn) sendBtn.disabled = true;
   messagesEl.appendChild(createBotBubble('', true));
   scrollToBottom(messagesEl);
 
-  // Simulasi delay supaya terasa natural (400ms)
+  // Delay natural 400ms
   await new Promise(r => setTimeout(r, 400));
 
   try {
     const res = await fetch(`${API_BASE}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: text,
-        sessionId: state.sessionId,
-      }),
+      body: JSON.stringify({ message: text, sessionId: state.sessionId }),
     });
 
     const data = await res.json();
     document.getElementById('nicobot-typing')?.remove();
 
     if (data.error) {
-      messagesEl.appendChild(createBotBubble('⚠️ ' + data.error));
+      messagesEl.appendChild(createBotBubble(`<p>⚠️ ${data.error}</p>`));
     } else {
       messagesEl.appendChild(createBotBubble(data.reply));
-
-      // Kalau intent fallback, tunjukkan lagi quick replies
-      if (data.intent === 'fallback') {
-        if (quickEl) {
-          quickEl.style.display = 'flex';
-          loadQuickReplies(quickEl);
-        }
+      if (data.intent === 'fallback' && quickEl) {
+        quickEl.style.display = 'flex';
+        loadQuickReplies(quickEl);
       }
     }
   } catch {
     document.getElementById('nicobot-typing')?.remove();
-    messagesEl.appendChild(
-      createBotBubble('Tidak bisa terhubung ke server. Pastikan server NicoBot sudah berjalan. 🔌')
-    );
+    messagesEl.appendChild(createBotBubble('<p>Tidak bisa terhubung ke server. Pastikan server NicoBot sudah berjalan. 🔌</p>'));
   } finally {
     state.isLoading = false;
     if (sendBtn) sendBtn.disabled = false;
@@ -151,7 +127,7 @@ async function sendMessage(text) {
   }
 }
 
-// ---- Reset percakapan ----
+// ---- Reset ----
 async function resetSession() {
   try {
     await fetch(`${API_BASE}/reset-session`, {
@@ -159,7 +135,7 @@ async function resetSession() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId: state.sessionId }),
     });
-  } catch { /* silent */ }
+  } catch {}
 
   sessionStorage.removeItem('nicobot_session');
   state.sessionId = getSessionId();
@@ -172,9 +148,7 @@ async function resetSession() {
 
   if (messagesEl) {
     messagesEl.innerHTML = '';
-    messagesEl.appendChild(createBotBubble(
-      'Halo! 👋 Saya NicoBot, asisten resmi SMK ICB Cinta Niaga.\n\nAda yang bisa saya bantu? 😊'
-    ));
+    messagesEl.appendChild(createBotBubble('<p>Halo! 👋 Saya <strong>NicoBot</strong>, asisten resmi SMK ICB Cinta Niaga.</p><p class="mt-2">Silakan pilih topik atau ketik pertanyaanmu! 😊</p>'));
   }
   if (inputEl) { inputEl.disabled = false; inputEl.placeholder = 'Ketik pertanyaanmu...'; }
   if (sendBtn) sendBtn.disabled = false;
@@ -189,28 +163,15 @@ export function initChatbot() {
   const resetBtn   = document.getElementById('nicobot-reset');
   const quickEl    = document.getElementById('nicobot-quick-replies');
 
-  if (!messagesEl) {
-    console.warn('NicoBot: elemen #nicobot-messages tidak ditemukan.');
-    return;
-  }
+  if (!messagesEl) { console.warn('NicoBot: #nicobot-messages tidak ditemukan.'); return; }
 
-  // Pesan sambutan
-  messagesEl.appendChild(createBotBubble(
-    'Halo! 👋 Saya NicoBot, asisten resmi SMK ICB Cinta Niaga.\n\nSilakan pilih topik di bawah atau ketik pertanyaanmu! 😊'
-  ));
+  messagesEl.appendChild(createBotBubble('<p>Halo! 👋 Saya <strong>NicoBot</strong>, asisten resmi SMK ICB Cinta Niaga.</p><p class="mt-2">Silakan pilih topik di bawah atau ketik pertanyaanmu! 😊</p>'));
 
   if (quickEl) loadQuickReplies(quickEl);
 
-  sendBtn?.addEventListener('click', () => {
-    sendMessage(inputEl?.value.trim() ?? '');
-  });
-
+  sendBtn?.addEventListener('click', () => sendMessage(inputEl?.value.trim() ?? ''));
   inputEl?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage(inputEl.value.trim());
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(inputEl.value.trim()); }
   });
-
   resetBtn?.addEventListener('click', resetSession);
 }
