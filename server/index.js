@@ -1,6 +1,6 @@
 // =============================================
 // NICOBOT - Backend Server SMK ICB Cinta Niaga
-// Template-Based Chatbot (tanpa AI API)
+// Template-Based Chatbot
 // =============================================
 
 const express = require('express');
@@ -12,194 +12,271 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-// =============================================
-// PENYIMPANAN SESI
-// =============================================
 const userSessions = {};
 const NOMOR_ADMIN = '081221049998';
 
 // =============================================
-// DATABASE TEMPLATE JAWABAN
-// Setiap intent punya: keywords[] dan reply
+// TEMPLATE JAWABAN
+// reply menggunakan HTML langsung — tidak ada markdown
 // =============================================
 const templates = [
 
-  // ---- SALAM / SAPAAN ----
   {
     id: 'salam',
-    keywords: ['halo', 'hai', 'hi', 'hello', 'selamat', 'pagi', 'siang', 'sore', 'malam', 'assalamualaikum', 'hei', 'hey'],
-    reply: `Halo! 👋 Selamat datang di NicoBot, asisten resmi *SMK ICB Cinta Niaga*.\n\nAda yang bisa saya bantu? Silakan pilih topik di bawah atau ketik pertanyaanmu langsung ya! 😊`
+    keywords: ['halo', 'hai', 'hi', 'hello', 'selamat', 'pagi', 'siang', 'sore', 'malam', 'assalamualaikum', 'hei', 'hey', 'hy'],
+    reply: `<p>Halo! 👋 Selamat datang di <strong>NicoBot</strong>, asisten resmi SMK ICB Cinta Niaga.</p><p class="mt-2">Ada yang bisa saya bantu? Silakan pilih topik di bawah atau ketik pertanyaanmu langsung ya! 😊</p>`
   },
 
-  // ---- TERIMA KASIH ----
   {
     id: 'terimakasih',
     keywords: ['terima kasih', 'makasih', 'thanks', 'thank you', 'thx', 'tq', 'tengkyu'],
-    reply: `Sama-sama! 😊 Senang bisa membantu. Kalau ada pertanyaan lain seputar SMK ICB Cinta Niaga, jangan ragu untuk bertanya ya!`
+    reply: `<p>Sama-sama! 😊 Senang bisa membantu. Kalau ada pertanyaan lain seputar SMK ICB Cinta Niaga, jangan ragu untuk bertanya ya!</p>`
   },
 
-  // ---- INFO UMUM / PROFIL SEKOLAH ----
   {
     id: 'info_umum',
-    keywords: ['info', 'informasi', 'profil', 'tentang', 'sekolah', 'smk', 'icb', 'cinta niaga', 'kepala sekolah', 'alamat', 'lokasi', 'dimana', 'letak', 'email', 'kontak', 'telepon', 'phone', 'nomor', 'hubungi', 'contact', 'whatsapp', 'wa'],
-    reply: `📋 *Profil SMK ICB Cinta Niaga*\n\n🏫 *Nama:* SMK ICB Cinta Niaga (Insan Cinta Bangsa)\n👨‍💼 *Kepala Sekolah:* Galih Arifandi, S.Pd.\n📍 *Alamat:* Jl. Pahlawan No.19B1, Cihaur Geulis, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40122\n📞 *Telepon/WA:* 081221049998\n📧 *Email:* smkicbcintaniaga19b@gmail.com\n\nUntuk kunjungan langsung, silakan lihat jam operasional kami ya! ⏰`
+    keywords: ['info', 'informasi', 'profil', 'tentang', 'kepala sekolah', 'alamat', 'lokasi', 'dimana', 'letak', 'email', 'kontak', 'telepon', 'nomor', 'hubungi', 'whatsapp', 'wa', 'contact'],
+    reply: `
+      <p class="font-semibold mb-3">Profil SMK ICB Cinta Niaga</p>
+      <div class="info-grid">
+        <div class="info-row"><span class="info-label">Nama</span><span>SMK ICB Cinta Niaga (Insan Cinta Bangsa)</span></div>
+        <div class="info-row"><span class="info-label">Kepala Sekolah</span><span>Galih Arifandi, S.Pd.</span></div>
+        <div class="info-row"><span class="info-label">Alamat</span><span>Jl. Pahlawan No.19B1, Cihaur Geulis, Kec. Cibeunying Kaler, Kota Bandung 40122</span></div>
+        <div class="info-row"><span class="info-label">Telepon / WA</span><span>081221049998</span></div>
+        <div class="info-row"><span class="info-label">Email</span><span>smkicbcintaniaga19b@gmail.com</span></div>
+      </div>`
   },
 
-  // ---- JAM OPERASIONAL ----
   {
     id: 'jam_operasional',
     keywords: ['jam', 'waktu', 'operasional', 'buka', 'tutup', 'masuk', 'pulang', 'jadwal', 'kunjungan', 'tamu'],
-    reply: `⏰ *Jam Operasional SMK ICB Cinta Niaga*\n\n👨‍🎓 *Jam Sekolah Siswa:*\n• Senin – Selasa : 06.30 – 14.20 WIB\n• Rabu – Kamis   : 06.30 – 15.20 WIB\n• Jumat           : 06.30 – 11.00 WIB\n\n🏢 *Jam Kunjungan Tamu:*\n• Senin – Kamis : 08.00 – 15.00 WIB\n• Jumat         : 08.00 – 11.00 WIB`
+    reply: `
+      <p class="font-semibold mb-3">Jam Operasional</p>
+      <p class="text-xs uppercase tracking-wide opacity-60 mb-1">Jam Sekolah Siswa</p>
+      <div class="info-grid mb-3">
+        <div class="info-row"><span class="info-label">Senin – Selasa</span><span>06.30 – 14.20 WIB</span></div>
+        <div class="info-row"><span class="info-label">Rabu – Kamis</span><span>06.30 – 15.20 WIB</span></div>
+        <div class="info-row"><span class="info-label">Jumat</span><span>06.30 – 11.00 WIB</span></div>
+      </div>
+      <p class="text-xs uppercase tracking-wide opacity-60 mb-1">Jam Kunjungan Tamu</p>
+      <div class="info-grid">
+        <div class="info-row"><span class="info-label">Senin – Kamis</span><span>08.00 – 15.00 WIB</span></div>
+        <div class="info-row"><span class="info-label">Jumat</span><span>08.00 – 11.00 WIB</span></div>
+      </div>`
   },
 
-  // ---- VISI MISI ----
   {
     id: 'visi_misi',
-    keywords: ['visi', 'misi', 'tujuan', 'goal', 'visi misi'],
-    reply: `🎯 *Visi & Misi SMK ICB Cinta Niaga*\n\n🌟 *Visi:*\nMenjadi satuan pendidikan vokasi yang mampu membentuk generasi muda yang produktif dan berkarakter (cageur, bageur, bener, pinter, singer), serta berdaya saing global di sektor industri pada tahun 2030.\n\n📌 *Misi:*\n1. Menghasilkan lulusan yang berkarakter dan berdaya saing global\n2. Mendorong kreativitas dan kolaborasi dalam pembelajaran bermakna\n3. Mengembangkan kompetensi siswa melalui pemanfaatan digital (Industri 4.0)\n4. Memberdayakan karakter siswa agar siap kerja, kuliah, dan wirausaha\n5. Menjalin kemitraan dengan seluruh ekosistem pendidikan untuk penjaminan mutu`
+    keywords: ['visi', 'misi', 'tujuan', 'goal'],
+    reply: `
+      <p class="font-semibold mb-3">Visi &amp; Misi</p>
+      <p class="text-xs uppercase tracking-wide opacity-60 mb-1">Visi</p>
+      <p class="mb-3">Menjadi satuan pendidikan vokasi yang mampu membentuk generasi muda yang produktif dan berkarakter, serta berdaya saing global di sektor industri pada tahun 2030.</p>
+      <p class="text-xs uppercase tracking-wide opacity-60 mb-2">Misi</p>
+      <ol class="misi-list">
+        <li>Menghasilkan lulusan yang berkarakter dan berdaya saing global</li>
+        <li>Mendorong kreativitas dan kolaborasi dalam pembelajaran bermakna</li>
+        <li>Mengembangkan kompetensi siswa melalui pemanfaatan digital (Industri 4.0)</li>
+        <li>Memberdayakan siswa agar siap kerja, kuliah, dan berwirausaha</li>
+        <li>Menjalin kemitraan dengan ekosistem pendidikan untuk penjaminan mutu</li>
+      </ol>`
   },
 
-  // ---- JURUSAN ----
   {
     id: 'jurusan',
-    keywords: ['jurusan', 'program', 'studi', 'kejuruan', 'mplb', 'akuntansi', 'ak', 'rpl', 'pplg', 'perangkat lunak', 'programmer', 'developer', 'bisnis ritel', 'br', 'pemasaran', 'marketing', 'manajemen perkantoran', 'pilihan', 'jurusan apa'],
-    reply: `📚 *Jurusan di SMK ICB Cinta Niaga*\n_(Kapasitas: maks. 30 siswa/kelas)_\n\n1️⃣ *MPLB – Manajemen Perkantoran & Layanan Bisnis*\n   Area kerja luas di berbagai instansi, bisa jadi Event Organizer\n\n2️⃣ *AK – Akuntansi dan Keuangan Lembaga*\n   Fokus keuangan, peluang kerja di Bank atau kelola keuangan UMKM\n\n3️⃣ *PPLG/RPL – Pengembangan Perangkat Lunak & GIM*\n   Fokus teknologi & aplikasi, peluang jadi developer / game developer\n\n4️⃣ *BR – Bisnis Ritel / Pemasaran*\n   Fokus bisnis digital & marketing online, bisa buka toko sendiri\n\nMau tahu lebih detail salah satu jurusan? Tanyakan saja! 😊`
+    keywords: ['jurusan', 'program', 'studi', 'kejuruan', 'mplb', 'akuntansi', 'rpl', 'pplg', 'perangkat lunak', 'programmer', 'developer', 'bisnis ritel', 'pemasaran', 'marketing', 'manajemen perkantoran', 'jurusan apa'],
+    reply: `
+      <p class="font-semibold mb-3">Jurusan yang Tersedia <span class="badge">Maks. 30 siswa/kelas</span></p>
+      <div class="jurusan-list">
+        <div class="jurusan-item">
+          <span class="jurusan-tag">MPLB</span>
+          <div>
+            <p class="font-medium">Manajemen Perkantoran &amp; Layanan Bisnis</p>
+            <p class="text-sm opacity-70">Area kerja luas di berbagai instansi, bisa jadi Event Organizer</p>
+          </div>
+        </div>
+        <div class="jurusan-item">
+          <span class="jurusan-tag">AK</span>
+          <div>
+            <p class="font-medium">Akuntansi dan Keuangan Lembaga</p>
+            <p class="text-sm opacity-70">Fokus keuangan, peluang kerja di Bank atau kelola keuangan UMKM</p>
+          </div>
+        </div>
+        <div class="jurusan-item">
+          <span class="jurusan-tag">RPL</span>
+          <div>
+            <p class="font-medium">Pengembangan Perangkat Lunak &amp; GIM</p>
+            <p class="text-sm opacity-70">Fokus teknologi &amp; aplikasi, peluang jadi developer / game developer</p>
+          </div>
+        </div>
+        <div class="jurusan-item">
+          <span class="jurusan-tag">BR</span>
+          <div>
+            <p class="font-medium">Bisnis Ritel / Pemasaran</p>
+            <p class="text-sm opacity-70">Fokus bisnis digital &amp; marketing online, bisa buka toko sendiri</p>
+          </div>
+        </div>
+      </div>`
   },
 
-  // ---- PENDAFTARAN / PPDB ----
   {
     id: 'pendaftaran',
-    keywords: ['daftar', 'pendaftaran', 'ppdb', 'cara daftar', 'syarat', 'dokumen', 'registrasi', 'masuk', 'penerimaan', 'gelombang', 'online', 'offline', 'formulir'],
-    reply: `📝 *Info Pendaftaran (PPDB) SMK ICB Cinta Niaga*\n\n📅 *Jadwal:* Periode utama Mei – Juni (gelombang awal sudah dibuka lebih awal)\n\n🖥️ *Cara Mendaftar:*\n• *Online:* Melalui link pendaftaran, scan barcode, atau website resmi\n• *Offline:* Datang langsung ke sekolah, panitia siap membantu\n\n📄 *Dokumen yang Diperlukan:*\n1. Fotokopi Ijazah / SKL (2 lembar)\n2. Fotokopi KTP Orang Tua (2 lembar)\n3. Fotokopi Kartu Keluarga (1 lembar)\n4. Surat Keterangan Berkelakuan Baik dari Kepsek SMP asal\n5. Stofmap Biola warna kuning (2 buah)\n6. Kaos oblong warna putih\n\nAda pertanyaan lain seputar pendaftaran? 😊`
+    keywords: ['daftar', 'pendaftaran', 'ppdb', 'cara daftar', 'syarat', 'dokumen', 'registrasi', 'penerimaan', 'gelombang', 'formulir'],
+    reply: `
+      <p class="font-semibold mb-3">Info Pendaftaran (PPDB)</p>
+      <div class="info-row mb-3"><span class="info-label">Jadwal</span><span>Periode utama Mei – Juni (gelombang awal lebih awal)</span></div>
+      <p class="text-xs uppercase tracking-wide opacity-60 mb-2">Cara Mendaftar</p>
+      <div class="info-grid mb-3">
+        <div class="info-row"><span class="info-label">Online</span><span>Link pendaftaran, scan barcode, atau website resmi</span></div>
+        <div class="info-row"><span class="info-label">Offline</span><span>Datang langsung ke sekolah, panitia siap membantu</span></div>
+      </div>
+      <p class="text-xs uppercase tracking-wide opacity-60 mb-2">Dokumen yang Diperlukan</p>
+      <ol class="misi-list">
+        <li>Fotokopi Ijazah / SKL (2 lembar)</li>
+        <li>Fotokopi KTP Orang Tua (2 lembar)</li>
+        <li>Fotokopi Kartu Keluarga (1 lembar)</li>
+        <li>Surat Keterangan Berkelakuan Baik dari Kepsek SMP asal</li>
+        <li>Stofmap Biola warna kuning (2 buah)</li>
+        <li>Kaos oblong warna putih</li>
+      </ol>`
   },
 
-  // ---- BIAYA ----
   {
     id: 'biaya',
-    keywords: ['biaya', 'spp', 'uang', 'bayar', 'harga', 'tarif', 'iuran', 'dsp', 'dana sumbangan', 'berapa', 'cost', 'beasiswa', 'diskon', 'gratis', 'potongan', 'cicil'],
-    reply: `💰 *Biaya Sekolah SMK ICB Cinta Niaga (Kelas 10)*\n\n| Komponen | Biaya |\n|---|---|\n| SPP per bulan | Rp 375.000 |\n| Dana Sumbangan (DSP) | Rp 3.000.000 |\n| Uang Praktik & Ujian /tahun | Rp 1.550.000 |\n| Biaya Personal Siswa* | Rp 1.200.000 |\n| **TOTAL AWAL** | **Rp 6.325.000** |\n\n*_*Biaya personal meliputi: seragam olahraga, jurusan, batik, jas almamater, kartu pelajar, asuransi 3 tahun, kunjungan industri, air minum 1 tahun_\n\n🎁 *Program Diskon / Beasiswa:*\n• Diskon DSP 30% → daftar 1 Jan – 31 Mar 2026\n• Diskon DSP 20% → daftar 1 Apr – 30 Jun 2026\n• Diskon DSP 30% → khusus anak Guru, TNI, atau POLRI\n• Diskon tambahan 5% → jika biaya dibayar lunas sekaligus\n• Gratis SPP 1 bulan → jika SPP dibayar penuh 1 tahun`
+    keywords: ['biaya', 'spp', 'uang', 'bayar', 'harga', 'tarif', 'iuran', 'dsp', 'dana sumbangan', 'berapa', 'beasiswa', 'diskon', 'gratis', 'potongan'],
+    reply: `
+      <p class="font-semibold mb-3">Biaya Sekolah — Kelas 10</p>
+      <div class="biaya-table mb-3">
+        <div class="biaya-row"><span>SPP per bulan</span><span>Rp 375.000</span></div>
+        <div class="biaya-row"><span>Dana Sumbangan (DSP)</span><span>Rp 3.000.000</span></div>
+        <div class="biaya-row"><span>Uang Praktik &amp; Ujian / tahun</span><span>Rp 1.550.000</span></div>
+        <div class="biaya-row"><span>Biaya Personal Siswa</span><span>Rp 1.200.000</span></div>
+        <div class="biaya-row total"><span>Total Awal</span><span>Rp 6.325.000</span></div>
+      </div>
+      <p class="text-xs opacity-60 mb-3">Biaya personal meliputi: seragam, jas almamater, kartu pelajar, asuransi 3 tahun, kunjungan industri, air minum 1 tahun.</p>
+      <p class="text-xs uppercase tracking-wide opacity-60 mb-2">Program Diskon</p>
+      <div class="info-grid">
+        <div class="info-row"><span class="info-label">Diskon 30% DSP</span><span>Daftar 1 Jan – 31 Mar 2026</span></div>
+        <div class="info-row"><span class="info-label">Diskon 20% DSP</span><span>Daftar 1 Apr – 30 Jun 2026</span></div>
+        <div class="info-row"><span class="info-label">Diskon 30% DSP</span><span>Anak Guru, TNI, atau POLRI</span></div>
+        <div class="info-row"><span class="info-label">Diskon 5% tambahan</span><span>Jika biaya dibayar lunas sekaligus</span></div>
+        <div class="info-row"><span class="info-label">Gratis SPP 1 bulan</span><span>Jika SPP dibayar penuh 1 tahun</span></div>
+      </div>`
   },
 
-  // ---- FASILITAS ----
   {
     id: 'fasilitas',
     keywords: ['fasilitas', 'sarana', 'prasarana', 'lab', 'laboratorium', 'gor', 'olahraga', 'gedung', 'ruang', 'mart', 'niaga mart', 'seni'],
-    reply: `🏫 *Fasilitas SMK ICB Cinta Niaga*\n\n• 🔬 Laboratorium untuk setiap jurusan\n• 🎨 Ruang Seni\n• 🏀 Gedung Olahraga (GOR)\n• 🛒 Niaga Mart\n\nFasilitas dirancang untuk mendukung pembelajaran vokasi yang praktis dan siap industri! 💪`
+    reply: `
+      <p class="font-semibold mb-3">Fasilitas Sekolah</p>
+      <div class="fasilitas-grid">
+        <div class="fasilitas-item">Laboratorium Jurusan</div>
+        <div class="fasilitas-item">Ruang Seni</div>
+        <div class="fasilitas-item">Gedung Olahraga (GOR)</div>
+        <div class="fasilitas-item">Niaga Mart</div>
+      </div>`
   },
 
-  // ---- EKSTRAKURIKULER ----
   {
     id: 'ekskul',
-    keywords: ['ekskul', 'ekstrakurikuler', 'kegiatan', 'organisasi', 'osis', 'pmr', 'paskibra', 'boxing', 'rohis', 'pramuka', 'basket', 'fotografi', 'angklung', 'english club', 'paduan suara', 'japanese', 'sispala', 'club', 'komunitas'],
-    reply: `🎓 *Ekstrakurikuler SMK ICB Cinta Niaga*\n\nAda banyak pilihan ekskul seru! 🎉\n\n⚕️ PMR &nbsp;&nbsp; 🇮🇩 Paskibra &nbsp;&nbsp; 🥊 Boxing\n🕌 Rohis &nbsp;&nbsp; 💃 Serinca &nbsp;&nbsp; 🎭 Danger\n📷 Fotografi &nbsp;&nbsp; 🎵 Angklung &nbsp;&nbsp; 🏀 Basket\n🏕️ Pramuka &nbsp;&nbsp; 🧗 Sispala\n🇬🇧 English Club &nbsp;&nbsp; 🎤 Paduan Suara\n🇯🇵 Japanese Club &nbsp;&nbsp; 👥 OSIS\n\nMinat yang beragam bisa tersalurkan di sini! 😊`
+    keywords: ['ekskul', 'ekstrakurikuler', 'kegiatan', 'organisasi', 'osis', 'pmr', 'paskibra', 'boxing', 'rohis', 'pramuka', 'basket', 'fotografi', 'angklung', 'english club', 'paduan suara', 'japanese', 'sispala', 'club'],
+    reply: `
+      <p class="font-semibold mb-3">Ekstrakurikuler</p>
+      <div class="ekskul-grid">
+        <span class="ekskul-tag">PMR</span>
+        <span class="ekskul-tag">Paskibra</span>
+        <span class="ekskul-tag">Boxing</span>
+        <span class="ekskul-tag">Rohis</span>
+        <span class="ekskul-tag">Serinca</span>
+        <span class="ekskul-tag">Danger</span>
+        <span class="ekskul-tag">Fotografi</span>
+        <span class="ekskul-tag">Angklung</span>
+        <span class="ekskul-tag">Basket</span>
+        <span class="ekskul-tag">Pramuka</span>
+        <span class="ekskul-tag">Sispala</span>
+        <span class="ekskul-tag">English Club</span>
+        <span class="ekskul-tag">Paduan Suara</span>
+        <span class="ekskul-tag">Japanese Club</span>
+        <span class="ekskul-tag">OSIS</span>
+      </div>`
   },
 
-  // ---- PKL / MAGANG ----
   {
     id: 'pkl',
     keywords: ['pkl', 'magang', 'praktik kerja', 'prakerin', 'industri', 'kerja lapangan', 'tempat magang', 'yogya', 'griya', 'hotel'],
-    reply: `🏢 *Info PKL / Magang SMK ICB Cinta Niaga*\n\n• 🛒 Jaringan PKL resmi: **Toserba Yogya/Griya** (untuk semua jurusan) dan **perhotelan**\n• ✅ Siswa juga *boleh mencari tempat PKL sendiri* secara mandiri\n\nSMK ICB Cinta Niaga memastikan setiap siswa mendapat pengalaman kerja nyata sebelum lulus! 💼`
+    reply: `
+      <p class="font-semibold mb-3">PKL / Magang</p>
+      <div class="info-grid">
+        <div class="info-row"><span class="info-label">Mitra Resmi</span><span>Toserba Yogya / Griya (semua jurusan) dan perhotelan</span></div>
+        <div class="info-row"><span class="info-label">Mandiri</span><span>Siswa boleh mencari tempat PKL sendiri</span></div>
+      </div>`
   },
 
-  // ---- PRESTASI & ALUMNI ----
   {
     id: 'prestasi',
     keywords: ['prestasi', 'alumni', 'lulusan', 'kerja', 'karir', 'sukses', 'pencapaian', 'nicholas', 'taufiq', 'devops', 'berprestasi'],
-    reply: `🏆 *Prestasi & Alumni SMK ICB Cinta Niaga*\n\n✅ Sekolah menjamin lulusannya **siap kerja** — tidak ada siswa yang menganggur setelah lulus!\n🎯 Aktif mengadakan berbagai acara dan workshop persiapan karir\n\n👨‍💻 *Alumni Berprestasi:*\n\n• **Nicholas Alvi Saputra**\n  Alumni RPL angkatan 2019\n  → DevOps Engineer di PT. Swamedia\n\n• **Dr. Taufiq Hifayat, S.Sos., M.M.**\n  → Wakil Ketua 1 Bidang Akademik & Kemahasiswaan\n  di STIE Pariwisata Yapari Bandung`
+    reply: `
+      <p class="font-semibold mb-3">Prestasi &amp; Alumni</p>
+      <p class="mb-3">Sekolah menjamin lulusannya <strong>siap kerja</strong> — tidak ada siswa yang menganggur setelah lulus. Aktif mengadakan workshop dan persiapan karir. 🎯</p>
+      <p class="text-xs uppercase tracking-wide opacity-60 mb-2">Alumni Berprestasi</p>
+      <div class="alumni-list">
+        <div class="alumni-item">
+          <p class="font-medium">Nicholas Alvi Saputra</p>
+          <p class="text-sm opacity-70">Alumni RPL 2019 → DevOps Engineer di PT. Swamedia</p>
+        </div>
+        <div class="alumni-item">
+          <p class="font-medium">Dr. Taufiq Hifayat, S.Sos., M.M.</p>
+          <p class="text-sm opacity-70">Wakil Ketua 1 Bidang Akademik di STIE Pariwisata Yapari Bandung</p>
+        </div>
+      </div>`
   },
 
-  // ---- TIDAK DIKENALI ----
   {
     id: 'fallback',
-    keywords: [], // fallback tidak pakai keywords, dipanggil manual
-    reply: `Hmm, maaf saya belum bisa menjawab pertanyaan itu. 🙏\n\nSilakan pilih topik yang tersedia, atau hubungi admin kami langsung:\n📞 *WhatsApp:* 081221049998\n📧 *Email:* smkicbcintaniaga19b@gmail.com`
+    keywords: [],
+    reply: `<p>Maaf, saya belum bisa menjawab pertanyaan itu. 🙏</p><p class="mt-2">Silakan pilih topik yang tersedia, atau hubungi admin kami langsung:</p><p class="mt-2"><strong>WhatsApp:</strong> 081221049998<br><strong>Email:</strong> smkicbcintaniaga19b@gmail.com</p>`
   }
 ];
 
-// =============================================
-// ENGINE: Cocokkan pesan ke intent
-// Pakai fuzzy matching sederhana (includes)
-// =============================================
 function matchIntent(message) {
   const lower = message.toLowerCase().trim();
-
-  // Coba cocokkan ke setiap template
   for (const tmpl of templates) {
     if (tmpl.id === 'fallback') continue;
     for (const kw of tmpl.keywords) {
-      if (lower.includes(kw)) {
-        return tmpl;
-      }
+      if (lower.includes(kw)) return tmpl;
     }
   }
-
-  // Tidak cocok → fallback
   return templates.find(t => t.id === 'fallback');
 }
 
-// =============================================
-// ENDPOINT: Quick Replies
-// =============================================
 app.get('/api/quick-replies', (req, res) => {
-  const quickReplies = [
-    { id: 1, label: '📚 Jurusan yang Tersedia',  message: 'Jurusan apa saja yang ada?' },
-    { id: 2, label: '📝 Info Pendaftaran',        message: 'Bagaimana cara mendaftar?' },
-    { id: 3, label: '💰 Biaya Sekolah',           message: 'Berapa biaya sekolahnya?' },
-    { id: 4, label: '🎓 Fasilitas & Ekskul',      message: 'Apa saja fasilitas dan ekskul?' },
-    { id: 5, label: '⏰ Jam Operasional',          message: 'Jam berapa sekolah buka?' },
-    { id: 6, label: '🏆 Prestasi & Alumni',        message: 'Prestasi dan alumni sekolah' },
-    { id: 7, label: '📍 Lokasi & Kontak',          message: 'Di mana lokasi sekolah dan kontaknya?' },
-    { id: 8, label: '🎯 Visi & Misi',              message: 'Apa visi dan misi sekolah?' },
-  ];
-  res.json(quickReplies);
+  res.json([
+    { id: 1, label: 'Jurusan yang Tersedia',  message: 'jurusan apa saja' },
+    { id: 2, label: 'Info Pendaftaran',        message: 'cara daftar' },
+    { id: 3, label: 'Biaya Sekolah',           message: 'biaya sekolah' },
+    { id: 4, label: 'Fasilitas & Ekskul',      message: 'fasilitas ekskul' },
+    { id: 5, label: 'Jam Operasional',         message: 'jam operasional' },
+    { id: 6, label: 'Prestasi & Alumni',       message: 'prestasi alumni' },
+    { id: 7, label: 'Lokasi & Kontak',         message: 'alamat kontak' },
+    { id: 8, label: 'Visi & Misi',             message: 'visi misi' },
+  ]);
 });
 
-// =============================================
-// ENDPOINT: Chat (Template Engine)
-// =============================================
 app.post('/api/chat', (req, res) => {
   const { message, sessionId } = req.body;
-
-  if (!message || message.trim() === '') {
-    return res.status(400).json({ error: 'Pesan tidak boleh kosong' });
-  }
-  if (!sessionId) {
-    return res.status(400).json({ error: 'Session ID tidak ditemukan' });
-  }
-
-  // Inisialisasi sesi jika belum ada
-  if (!userSessions[sessionId]) {
-    userSessions[sessionId] = { count: 0 };
-  }
-
-  // Cocokkan pesan ke intent
+  if (!message || message.trim() === '') return res.status(400).json({ error: 'Pesan tidak boleh kosong' });
+  if (!sessionId) return res.status(400).json({ error: 'Session ID tidak ditemukan' });
+  if (!userSessions[sessionId]) userSessions[sessionId] = {};
   const matched = matchIntent(message);
-
-  res.json({
-    reply: matched.reply,
-    intent: matched.id,
-    timestamp: new Date().toISOString()
-  });
+  res.json({ reply: matched.reply, intent: matched.id, timestamp: new Date().toISOString() });
 });
 
-// =============================================
-// ENDPOINT: Reset Sesi
-// =============================================
 app.post('/api/reset-session', (req, res) => {
   const { sessionId } = req.body;
-  if (sessionId && userSessions[sessionId]) {
-    delete userSessions[sessionId];
-  }
+  if (sessionId && userSessions[sessionId]) delete userSessions[sessionId];
   res.json({ message: 'Sesi berhasil direset' });
 });
 
-// =============================================
-// ENDPOINT: Test
-// =============================================
-app.get('/', (req, res) => {
-  res.send('NicoBot Template Server berjalan! 🚀');
-});
+app.get('/', (req, res) => res.send('NicoBot Server berjalan! 🚀'));
 
-app.listen(PORT, () => {
-  console.log(`NicoBot Server berjalan di http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`NicoBot Server berjalan di http://localhost:${PORT}`));
