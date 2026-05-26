@@ -279,4 +279,8 @@ app.post('/api/reset-session', (req, res) => {
 
 app.get('/', (req, res) => res.send('NicoBot Server berjalan! 🚀'));
 
-app.listen(PORT, () => console.log(`NicoBot Server berjalan di http://localhost:${PORT}`));
+// Jalankan Server
+app.listen(PORT, () => {
+    console.log(`NicoBot Server berjalan di http://localhost:${PORT}`);
+});
+v
