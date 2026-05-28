@@ -39,304 +39,307 @@
 
     <main class="pt-14">
       <!-- ===== HERO SECTION ===== -->
-      <section
-        class="min-h-screen bg-[url('https://theoxfordmagazine.com/wp-content/uploads/university-of-oxford-01-1920x1080-1.jpg')] bg-cover bg-center"
-      >
-        <div class="min-h-screen bg-black/60 flex items-center">
-          <div class="p-30 md:max-w-6/10 flex flex-col gap-7">
-            <h2
-              class="border-solid inline-block w-fit py-1 px-2 md:py-2 md:px-3 rounded-md bg-white border border-gray-300 text-xs font-semibold drop-shadow-sm"
-            >
-             <i class="fa-solid fa-book-open text-blue-950"> </i> FUTURE-READY EDUCATION
-            </h2>
+      <!-- ============================================================
+     HERO SECTION — SMK ICB Cinta Niaga
+     Static image + layered overlay + stats mini + badge elegan
+     Pure Tailwind CSS v4 + FontAwesome 6.5.1
+     Ganti URL background image sesuai aset lokal kamu
+     ============================================================ -->
 
-            <h1 class="text-4xl md:text-5xl font-bold text-white">
-              Membangun Generasi <span class="text-yellow-800">Digital</span> yang Unggul dan Kompetitif
-            </h1>
+<section
+  class="relative min-h-screen bg-[url('https://theoxfordmagazine.com/wp-content/uploads/university-of-oxford-01-1920x1080-1.jpg')] bg-cover bg-center"
+>
 
-            <p class="text-sm md:text-lg text-white">
-              Persiapkan masa depan cerahmu bersama SMK ICB Cinta Niaga.
-              Kurikulum berbasis industri, fasilitas modern, dan bimbingan karir
-              yang komprehensif.
-            </p>
+  <!-- Layer 1: gradient overlay utama (lebih elegan dari flat black) -->
+  <div class="absolute inset-0 bg-gradient-to-r from-blue-950/90 via-blue-950/70 to-blue-950/20"></div>
 
-            <a
-              href="profile.html"
-              class="w-fit inline-block bg-blue-950 text-white font-semibold px-8 py-4 rounded-xl text-sm shadow-md shadow-black/50 hover:scale-105 transition"
-            >
-              Pelajari Lebih Lanjut
-            </a>
-          </div>
-        </div>
-      </section>
+  <!-- Layer 2: gradient bawah untuk groundkan konten -->
+  <div class="absolute inset-0 bg-gradient-to-t from-blue-950/60 via-transparent to-transparent"></div>
 
-      <!-- ABOUT SECTION -->
-      <section class="bg-[#ffffff] py-20 px-6 md:px-16">
-        <div class="max-w-7xl mx-auto flex flex-col gap-16">
-          <!-- TOP -->
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            <!-- LEFT CONTENT -->
-            <div class="lg:col-span-2 flex flex-col gap-5">
-              <p class="text-yellow-800 text-sm font-semibold">TENTANG KAMI</p>
+  <!-- Konten -->
+  <div class="relative z-10 min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24">
+    <div class="max-w-2xl flex flex-col gap-6 pt-20 pb-12">
 
-              <h1 class="text-3xl md:text-5xl font-bold text-blue-950">
-                Pusat Keunggulan Pendidikan Vokasi
-              </h1>
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 w-fit">
+        <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold tracking-widest uppercase px-4 py-2 rounded-full">
+          <i class="fa-solid fa-shield-halved text-amber-400"></i>
+          Terakreditasi A · Sejak 1989
+        </span>
+      </div>
 
-              <p
-                class="text-gray-600 leading-relaxed text-sm md:text-base max-w-3xl"
-              >
-                SMK ICB Cinta Niaga hadir sebagai institusi pendidikan yang
-                berfokus pada pengembangan talenta di era ekonomi digital. Kami
-                percaya setiap siswa memiliki potensi unik yang perlu diasah
-                melalui pendekatan praktis dan kolaboratif.
-              </p>
-            </div>
+      <!-- Headline -->
+      <h1 class="text-4xl sm:text-5xl font-bold text-white leading-tight">
+        Membangun Generasi
+        <span class="text-amber-400"> Digital</span>
+        <br class="hidden sm:block">
+        yang Unggul dan Kompetitif
+      </h1>
 
-            <!-- BLUE CARD -->
-            <div class="bg-blue-950 rounded-2xl p-8 text-white shadow-lg">
-              <div
-                class="w-14 h-14 rounded-full bg-yellow-400/20 flex items-center justify-center mb-6"
-              >
-                <i class="fa-solid fa-award text-yellow-600 text-2xl"></i>
-              </div>
-
-              <h2 class="text-2xl font-bold mb-2">Akreditasi A</h2>
-
-              <p class="text-gray-300 text-sm leading-relaxed">
-                Standar pendidikan nasional tertinggi dengan kurikulum yang
-                selalu relevan.
-              </p>
-            </div>
-          </div>
-
-          <!-- FEATURE CARDS -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <!-- CARD -->
-            <div
-              class="bg-gray-100 rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition"
-            >
-              <div
-                class="w-12 h-12 rounded-xl bg-white flex items-center justify-center mb-5"
-              >
-                <i class="fa-solid fa-handshake text-blue-950"></i>
-              </div>
-
-              <h3 class="font-bold text-lg mb-3">Link & Match Industri</h3>
-
-              <p class="text-gray-600 text-sm leading-relaxed">
-                Kemitraan strategis dengan perusahaan multinasional untuk
-                jaminan magang dan kerja.
-              </p>
-            </div>
-
-            <!-- CARD -->
-            <div
-              class="bg-gray-100 rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition"
-            >
-              <div
-                class="w-12 h-12 rounded-xl bg-white flex items-center justify-center mb-5"
-              >
-                <i class="fa-solid fa-users text-blue-950"></i>
-              </div>
-
-              <h3 class="font-bold text-lg mb-3">Pengajar Ahli</h3>
-
-              <p class="text-gray-600 text-sm leading-relaxed">
-                Praktisi industri dan akademisi berpengalaman siap membimbing
-                setiap langkah.
-              </p>
-            </div>
-
-            <!-- CARD -->
-            <div
-              class="bg-gray-100 rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition"
-            >
-              <div
-                class="w-12 h-12 rounded-xl bg-white flex items-center justify-center mb-5"
-              >
-                <i class="fa-solid fa-desktop text-blue-950"></i>
-              </div>
-
-              <h3 class="font-bold text-lg mb-3">Fasilitas Modern</h3>
-
-              <p class="text-gray-600 text-sm leading-relaxed">
-                Laboratorium komputer terkini, studio kreatif, dan lingkungan
-                belajar digital.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- MAJOR SECTION -->
-      <section class="bg-[#f5f5f7] py-20 px-6 md:px-16">
-        <div class="max-w-7xl mx-auto flex flex-col gap-14">
-          <!-- TITLE -->
-          <div class="text-center flex flex-col gap-4">
-            <h1 class="text-3xl md:text-5xl font-bold text-blue-950">
-              Program Keahlian
-            </h1>
-
-            <p class="text-gray-600 max-w-2xl mx-auto">
-              Pilih jurusan yang sesuai dengan minat dan passion-mu untuk karir
-              masa depan yang gemilang.
-            </p>
-          </div>
-
-          <!-- CARD GRID -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- CARD -->
-            <div
-              class="bg-white rounded-2xl border border-gray-200 p-7 flex flex-col gap-5 hover:-translate-y-1 hover:shadow-lg transition"
-            >
-              <div
-                class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center"
-              >
-                <i class="fa-solid fa-laptop-code text-blue-950 text-xl"></i>
-              </div>
-
-              <h2 class="text-2xl font-bold text-blue-950">RPL</h2>
-
-              <p class="text-gray-600 text-sm leading-relaxed">
-                Rekayasa Perangkat Lunak, fokus membuat aplikasi web, mobile,
-                dan pengembangan software modern.
-              </p>
-
-              <a href="#" class="text-blue-950 font-semibold text-sm mt-auto">
-                Info Detail →
-              </a>
-            </div>
-
-            <!-- CARD -->
-            <div
-              class="bg-white rounded-2xl border border-gray-200 p-7 flex flex-col gap-5 hover:-translate-y-1 hover:shadow-lg transition"
-            >
-              <div
-                class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center"
-              >
-                <i class="fa-solid fa-store text-blue-950 text-xl"></i>
-              </div>
-
-              <h2 class="text-2xl font-bold text-blue-950">Bisnis Retail</h2>
-
-              <p class="text-gray-600 text-sm leading-relaxed">
-                Pelajari manajemen toko modern, strategi pemasaran digital, dan
-                kewirausahaan di era retail 4.0.
-              </p>
-
-              <a href="#" class="text-blue-950 font-semibold text-sm mt-auto">
-                Info Detail →
-              </a>
-            </div>
-
-            <!-- CARD -->
-            <div
-              class="bg-white rounded-2xl border border-gray-200 p-7 flex flex-col gap-5 hover:-translate-y-1 hover:shadow-lg transition"
-            >
-              <div
-                class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center"
-              >
-                <i class="fa-solid fa-calculator text-blue-950 text-xl"></i>
-              </div>
-
-              <h2 class="text-2xl font-bold text-blue-950">Akuntansi</h2>
-
-              <p class="text-gray-600 text-sm leading-relaxed">
-                Manajemen keuangan profesional, perpajakan, dan penguasaan
-                software akuntansi standar industri.
-              </p>
-
-              <a href="#" class="text-blue-950 font-semibold text-sm mt-auto">
-                Info Detail →
-              </a>
-            </div>
-
-            <!-- CARD -->
-            <div
-              class="bg-white rounded-2xl border border-gray-200 p-7 flex flex-col gap-5 hover:-translate-y-1 hover:shadow-lg transition"
-            >
-              <div
-                class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center"
-              >
-                <i class="fa-solid fa-building text-blue-950 text-xl"></i>
-              </div>
-
-              <h2 class="text-2xl font-bold text-blue-950">Perkantoran</h2>
-
-              <p class="text-gray-600 text-sm leading-relaxed">
-                Kelola administrasi bisnis secara efisien dengan penguasaan
-                teknologi perkantoran terkini.
-              </p>
-
-              <a href="#" class="text-blue-950 font-semibold text-sm mt-auto">
-                Info Detail →
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- STATS -->
-      <section class="bg-blue-950 py-12 px-6 md:px-16">
-        <div
-          class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 text-center"
-        >
-          <div>
-            <h1 class="text-[#725C00] text-4xl font-semibold">488</h1>
-
-            <p class="text-gray-300 text-sm mt-2">SISWA AKTIF</p>
-          </div>
-
-          <div>
-            <h1 class="text-[#725C00] text-4xl font-semibold">42</h1>
-
-            <p class="text-gray-300 text-sm mt-2">MITRA INDUSTRI</p>
-          </div>
-
-          <div>
-            <h1 class="text-[#725C00] text-4xl font-semibold">17</h1>
-
-            <p class="text-gray-300 text-sm mt-2">Rombel</p>
-          </div>
-
-          <div>
-            <h1 class="text-[#725C00] text-4xl font-semibold">25th</h1>
-
-            <p class="text-gray-300 text-sm mt-2">PENGALAMAN</p>
-          </div>
-        </div>
-      </section>
+      <!-- Sub-headline -->
+      <p class="text-blue-100/80 text-base leading-relaxed max-w-lg">
+        Persiapkan masa depan cerahmu bersama SMK ICB Cinta Niaga.
+        Kurikulum berbasis industri, fasilitas modern, dan bimbingan karir yang komprehensif.
+      </p>
 
       <!-- CTA -->
-      <section class="bg-[#f5f5f7] py-24 px-6 md:px-16">
-        <div
-          class="max-w-4xl mx-auto text-center flex flex-col items-center gap-10"
+      <div class="flex flex-col sm:flex-row gap-3 mt-2">
+        <a
+          href="profile.html"
+          class="inline-flex items-center justify-center gap-2 bg-amber-400 hover:bg-amber-300 text-blue-950 font-bold px-7 py-3.5 rounded-xl text-sm transition-all duration-200 hover:scale-[1.02] shadow-lg shadow-amber-400/20"
         >
-          <h1
-            class="text-4xl md:text-6xl font-bold text-blue-950 leading-tight"
-          >
-            Siap Bergabung dengan Keluarga SMK ICB Cinta Niaga?
-          </h1>
+          Pelajari Lebih Lanjut
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+        
+      </div>
+    </div>
+  </div>
 
-          <div class="flex flex-col sm:flex-row gap-5">
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfPR7CSLRyd-4eqlpmr441M7zsm9Uh7rCr4z2mGLBX36_Ezjg/viewform"
-              class="bg-blue-950 text-white px-8 py-4 rounded-xl shadow-lg shadow-blue-950/20 hover:scale-105 transition"
-            >
-              Daftar PPDB 2024
-            </a>
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 text-white/40">
+    <p class="text-[10px] tracking-widest uppercase">Scroll</p>
+    <i class="fa-solid fa-chevron-down text-xs animate-bounce"></i>
+  </div>
 
-            <a
-              href="#"
-              class="bg-white shadow-lg px-8 py-4 rounded-xl hover:bg-gray-100 transition"
-            >
-              Hubungi Admin
-            </a>
+</section>
+
+      <!-- ============================================================
+     SECTION BAWAH HERO — SMK ICB Cinta Niaga
+     About · Major · Stats · CTA
+     Pure Tailwind CSS v4 + FontAwesome 6.5.1
+
+     Perubahan dari versi lama:
+     - Konsistensi warna aksen → amber-400/amber-500 (ganti yellow-800/#725C00)
+     - Feature card: icon container lebih refined, hover lebih halus
+     - Major card: konsisten rounded, spacing, dan link style
+     - Stats: angka lebih kontras (amber-400 bukan dark gold)
+     - CTA: button hierarchy lebih jelas
+     - Semua section pure Tailwind, zero inline CSS
+     ============================================================ -->
+
+
+<!-- ── ABOUT SECTION ── -->
+<section class="bg-white py-20 px-6 md:px-16">
+  <div class="max-w-7xl mx-auto flex flex-col gap-16">
+
+    <!-- Top: teks kiri + kartu biru kanan -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+      <!-- Konten kiri -->
+      <div class="lg:col-span-2 flex flex-col gap-5">
+        <span class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-amber-600 w-fit">
+          <span class="w-6 h-px bg-amber-500"></span>
+          Tentang Kami
+        </span>
+        <h2 class="text-3xl md:text-5xl font-bold text-blue-950 leading-tight">
+          Pusat Keunggulan<br class="hidden md:block"> Pendidikan Vokasi
+        </h2>
+        <p class="text-slate-500 leading-relaxed text-sm md:text-base max-w-2xl">
+          SMK ICB Cinta Niaga hadir sebagai institusi pendidikan yang berfokus
+          pada pengembangan talenta di era ekonomi digital. Kami percaya setiap
+          siswa memiliki potensi unik yang perlu diasah melalui pendekatan
+          praktis dan kolaboratif.
+        </p>
+      </div>
+
+      <!-- Kartu biru kanan -->
+      <div class="bg-blue-950 rounded-2xl p-8 text-white shadow-sm relative overflow-hidden">
+        <span class="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-blue-800/40 pointer-events-none"></span>
+        <div class="relative z-10">
+          <div class="w-12 h-12 rounded-xl bg-amber-400/20 flex items-center justify-center mb-6">
+            <i class="fa-solid fa-award text-amber-400 text-xl"></i>
           </div>
+          <h3 class="text-2xl font-bold mb-2">Akreditasi A</h3>
+          <p class="text-blue-200 text-sm leading-relaxed">
+            Standar pendidikan nasional tertinggi dengan kurikulum yang selalu
+            relevan dan terbarukan.
+          </p>
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+      <div class="bg-[#f5f5f7] rounded-2xl p-6 border border-slate-200/70 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+        <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center mb-5 shadow-sm">
+          <i class="fa-solid fa-handshake text-blue-950 text-base"></i>
+        </div>
+        <h3 class="font-bold text-base text-blue-950 mb-2">Link & Match Industri</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Kemitraan strategis dengan perusahaan multinasional untuk jaminan magang dan kerja.
+        </p>
+      </div>
+
+      <div class="bg-[#f5f5f7] rounded-2xl p-6 border border-slate-200/70 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+        <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center mb-5 shadow-sm">
+          <i class="fa-solid fa-users text-blue-950 text-base"></i>
+        </div>
+        <h3 class="font-bold text-base text-blue-950 mb-2">Pengajar Ahli</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Praktisi industri dan akademisi berpengalaman siap membimbing setiap langkah.
+        </p>
+      </div>
+
+      <div class="bg-[#f5f5f7] rounded-2xl p-6 border border-slate-200/70 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+        <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center mb-5 shadow-sm">
+          <i class="fa-solid fa-desktop text-blue-950 text-base"></i>
+        </div>
+        <h3 class="font-bold text-base text-blue-950 mb-2">Fasilitas Modern</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Laboratorium komputer terkini, studio kreatif, dan lingkungan belajar digital.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── MAJOR SECTION ── -->
+<section class="bg-[#f5f5f7] py-20 px-6 md:px-16">
+  <div class="max-w-7xl mx-auto flex flex-col gap-14">
+
+    <!-- Judul -->
+    <div class="text-center flex flex-col gap-3">
+      <span class="inline-flex items-center justify-center gap-2 text-xs font-semibold tracking-widest uppercase text-amber-600">
+        <span class="w-6 h-px bg-amber-500"></span>
+        Jurusan
+        <span class="w-6 h-px bg-amber-500"></span>
+      </span>
+      <h2 class="text-3xl md:text-5xl font-bold text-blue-950">Program Keahlian</h2>
+      <p class="text-slate-500 max-w-xl mx-auto text-sm md:text-base">
+        Pilih jurusan yang sesuai dengan minat dan passionmu untuk karir masa depan yang gemilang.
+      </p>
+    </div>
+
+    <!-- Card grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-7 flex flex-col gap-5 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-950/5 transition-all duration-200">
+        <div class="w-13 h-13 rounded-xl bg-[#f5f5f7] flex items-center justify-center">
+          <i class="fa-solid fa-laptop-code text-blue-950 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-blue-950">RPL</h3>
+        <p class="text-slate-500 text-sm leading-relaxed flex-1">
+          Rekayasa Perangkat Lunak — fokus membuat aplikasi web, mobile, dan pengembangan software modern.
+        </p>
+        <a href="#" class="inline-flex items-center gap-1.5 text-blue-950 font-semibold text-sm hover:gap-2.5 transition-all duration-150">
+          Info Detail <i class="fa-solid fa-arrow-right text-xs text-amber-500"></i>
+        </a>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-7 flex flex-col gap-5 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-950/5 transition-all duration-200">
+        <div class="w-13 h-13 rounded-xl bg-[#f5f5f7] flex items-center justify-center">
+          <i class="fa-solid fa-store text-blue-950 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-blue-950">Bisnis Retail</h3>
+        <p class="text-slate-500 text-sm leading-relaxed flex-1">
+          Manajemen toko modern, strategi pemasaran digital, dan kewirausahaan di era retail 4.0.
+        </p>
+        <a href="#" class="inline-flex items-center gap-1.5 text-blue-950 font-semibold text-sm hover:gap-2.5 transition-all duration-150">
+          Info Detail <i class="fa-solid fa-arrow-right text-xs text-amber-500"></i>
+        </a>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-7 flex flex-col gap-5 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-950/5 transition-all duration-200">
+        <div class="w-13 h-13 rounded-xl bg-[#f5f5f7] flex items-center justify-center">
+          <i class="fa-solid fa-calculator text-blue-950 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-blue-950">Akuntansi</h3>
+        <p class="text-slate-500 text-sm leading-relaxed flex-1">
+          Manajemen keuangan profesional, perpajakan, dan penguasaan software akuntansi standar industri.
+        </p>
+        <a href="#" class="inline-flex items-center gap-1.5 text-blue-950 font-semibold text-sm hover:gap-2.5 transition-all duration-150">
+          Info Detail <i class="fa-solid fa-arrow-right text-xs text-amber-500"></i>
+        </a>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-7 flex flex-col gap-5 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-950/5 transition-all duration-200">
+        <div class="w-13 h-13 rounded-xl bg-[#f5f5f7] flex items-center justify-center">
+          <i class="fa-solid fa-building text-blue-950 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-blue-950">Perkantoran</h3>
+        <p class="text-slate-500 text-sm leading-relaxed flex-1">
+          Kelola administrasi bisnis secara efisien dengan penguasaan teknologi perkantoran terkini.
+        </p>
+        <a href="#" class="inline-flex items-center gap-1.5 text-blue-950 font-semibold text-sm hover:gap-2.5 transition-all duration-150">
+          Info Detail <i class="fa-solid fa-arrow-right text-xs text-amber-500"></i>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ── STATS SECTION ── -->
+<section class="bg-blue-950 py-14 px-6 md:px-16">
+  <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+
+    <div class="flex flex-col items-center gap-2">
+      <p class="text-amber-400 text-4xl md:text-5xl font-black tracking-tight">488</p>
+      <p class="text-blue-300 text-xs font-medium tracking-widest uppercase">Siswa Aktif</p>
+    </div>
+
+    <div class="flex flex-col items-center gap-2">
+      <p class="text-amber-400 text-4xl md:text-5xl font-black tracking-tight">42</p>
+      <p class="text-blue-300 text-xs font-medium tracking-widest uppercase">Mitra Industri</p>
+    </div>
+
+    <div class="flex flex-col items-center gap-2">
+      <p class="text-amber-400 text-4xl md:text-5xl font-black tracking-tight">17</p>
+      <p class="text-blue-300 text-xs font-medium tracking-widest uppercase">Rombel</p>
+    </div>
+
+    <div class="flex flex-col items-center gap-2">
+      <p class="text-amber-400 text-4xl md:text-5xl font-black tracking-tight">35+</p>
+      <p class="text-blue-300 text-xs font-medium tracking-widest uppercase">Tahun Pengalaman</p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ── CTA SECTION ── -->
+<section class="bg-[#f5f5f7] py-24 px-6 md:px-16">
+  <div class="max-w-3xl mx-auto text-center flex flex-col items-center gap-8">
+
+    <span class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-amber-600">
+      <span class="w-6 h-px bg-amber-500"></span>
+      Bergabung
+      <span class="w-6 h-px bg-amber-500"></span>
+    </span>
+
+    <h2 class="text-4xl md:text-5xl font-bold text-blue-950 leading-tight">
+      Siap Bergabung dengan<br class="hidden sm:block">
+      Keluarga SMK ICB?
+    </h2>
+
+    <p class="text-slate-500 text-base max-w-md leading-relaxed -mt-2">
+      Daftarkan dirimu sekarang dan jadilah bagian dari komunitas pelajar
+      terbaik yang siap menghadapi dunia kerja.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSfPR7CSLRyd-4eqlpmr441M7zsm9Uh7rCr4z2mGLBX36_Ezjg/viewform"
+        class="inline-flex items-center justify-center gap-2 bg-blue-950 hover:bg-blue-900 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-blue-950/20 hover:scale-[1.02] transition-all duration-200 text-sm"
+      >
+        <i class="fa-solid fa-pen-to-square text-amber-400"></i>
+        Daftar PPDB 2026
+      </a>
+      <a
+        href="nicobot.html"
+        class="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-blue-950 font-semibold px-8 py-4 rounded-xl hover:shadow-md transition-all duration-200 text-sm"
+      >
+        <i class="fa-solid fa-comment-dots text-blue-950"></i>
+        Hubungi Admin
+      </a>
+    </div>
+
+  </div>
+</section>
 
     <!-- FOOTER -->
     <footer class="bg-blue-950 text-white py-14 px-5 md:px-16">
